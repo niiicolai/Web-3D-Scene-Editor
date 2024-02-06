@@ -1,0 +1,97 @@
+[
+    {
+        "name": "Couch Center",
+        "src": "/meshes/couch_center.gltf",
+        "thumbnail": "/thumbnails/couch_center.png",
+        "sub_meshes": [
+            {
+                "name": "Cube007",
+                "material": "Black Fabric"
+            },
+            {
+                "name": "Cube008",
+                "material": "Black Fabric"
+            },
+            {
+                "name": "Cube033",
+                "material": "Black Fabric"
+            }
+        ]
+    },
+    {
+        "name": "Couch Chaiselong",
+        "src": "/meshes/couch_chaiselong.gltf",
+        "thumbnail": "/thumbnails/couch_chaiselong.png",
+        "sub_meshes": [
+            {
+                "name": "Cube007",
+                "material": "Black Fabric"
+            },
+            {
+                "name": "Cube008",
+                "material": "Black Fabric"
+            },
+            {
+                "name": "Cube033",
+                "material": "Black Fabric"
+            }
+        ]
+    },
+    {
+        "name": "Couch Corner",
+        "src": "/meshes/couch_corner.gltf",
+        "thumbnail": "/thumbnails/couch_corner.png",
+        "sub_meshes": [
+            {
+                "name": "Cube007",
+                "material": "Black Fabric"
+            },
+            {
+                "name": "Cube008",
+                "material": "Black Fabric"
+            },
+            {
+                "name": "Cube033",
+                "material": "Black Fabric"
+            }
+        ]
+    },
+    {
+        "name": "Couch Left Side",
+        "src": "/meshes/couch_left_side.gltf",
+        "thumbnail": "/thumbnails/couch_left_side.png",
+        "sub_meshes": [
+            {
+                "name": "Cube007",
+                "material": "Black Fabric"
+            },
+            {
+                "name": "Cube008",
+                "material": "Black Fabric"
+            },
+            {
+                "name": "Cube033",
+                "material": "Black Fabric"
+            }
+        ]
+    },
+    {
+        "name": "Pillow",
+        "src": "/meshes/pillow.gltf",
+        "thumbnail": "/thumbnails/pillow.png",
+        "sub_meshes": [
+            {
+                "name": "Cube007",
+                "material": "Black Fabric"
+            },
+            {
+                "name": "Cube008",
+                "material": "Black Fabric"
+            },
+            {
+                "name": "Cube033",
+                "material": "Black Fabric"
+            }
+        ]
+    }
+]

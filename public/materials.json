@@ -1,0 +1,52 @@
+[
+    {
+        "name": "Black Fabric",
+        "type": "MeshPhysicalMaterial",
+        "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0
+        },
+        "texture_pack": "Black Fabric"
+    },
+    {
+        "name": "Grey Fabric",
+        "type": "MeshPhysicalMaterial",
+        "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0
+        },
+        "texture_pack": "Grey Fabric"
+    },
+    {
+        "name": "White Fabric",
+        "type": "MeshPhysicalMaterial",
+        "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0
+        },
+        "texture_pack": "White Fabric"
+    },
+    {
+        "name": "Concrete",
+        "type": "MeshPhysicalMaterial",
+        "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0
+        },
+        "texture_pack": "Concrete"
+    },
+    {
+        "name": "Wood",
+        "type": "MeshPhysicalMaterial",
+        "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0
+        },
+        "texture_pack": "Wood"
+    }
+]
