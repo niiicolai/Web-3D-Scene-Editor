@@ -1,67 +1,52 @@
 [
     {
-        "name": "Black Fabric",
-        "textures": [
-            {
-                "src": "/textures/black_fabric_basecolor.png",
-                "type": "map"
-            },
-            {
-                "src": "/textures/black_fabric_normal.png",
-                "type": "normalMap"
-            }
-        ]
+        "name": "Black Fabric Map",
+        "src": "/textures/black_fabric_basecolor.png",
+        "type": "map"
     },
     {
-        "name": "Grey Fabric",
-        "textures": [
-            {
-                "src": "/textures/grey_fabric_basecolor.png",
-                "type": "map"
-            },
-            {
-                "src": "/textures/grey_fabric_normal.png",
-                "type": "normalMap"
-            }
-        ]
+        "name": "Black Fabric Normal",
+        "src": "/textures/black_fabric_normal.png",
+        "type": "normalMap"
     },
     {
-        "name": "White Fabric",
-        "textures": [
-            {
-                "src": "/textures/white_fabric_basecolor.png",
-                "type": "map"
-            },
-            {
-                "src": "/textures/white_fabric_normal.png",
-                "type": "normalMap"
-            }
-        ]
+        "name": "Grey Fabric Map",
+        "src": "/textures/grey_fabric_basecolor.png",
+        "type": "map"
     },
     {
-        "name": "Concrete",
-        "textures": [
-            {
-                "src": "/textures/concrete_basecolor.png",
-                "type": "map"
-            },
-            {
-                "src": "/textures/concrete_normal.png",
-                "type": "normalMap"
-            }
-        ]
+        "name": "Grey Fabric Normal",
+        "src": "/textures/grey_fabric_normal.png",
+        "type": "normalMap"
     },
     {
-        "name": "Wood",
-        "textures": [
-            {
-                "src": "/textures/wood_basecolor.png",
-                "type": "map"
-            },
-            {
-                "src": "/textures/wood_normal.png",
-                "type": "normalMap"
-            }
-        ]
+        "name": "White Fabric Map",
+        "src": "/textures/white_fabric_basecolor.png",
+        "type": "map"
+    },
+    {
+        "name": "White Fabric Normal",
+        "src": "/textures/white_fabric_normal.png",
+        "type": "normalMap"
+    },
+    {
+        "name": "Concrete Map",
+        "src": "/textures/concrete_basecolor.png",
+        "type": "map"
+    },
+    {
+        "name": "Concrete Normal",
+        "src": "/textures/concrete_normal.png",
+        "type": "normalMap"
+    },
+    {
+        "name": "Wood Map",
+        "src": "/textures/wood_basecolor.png",
+        "type": "map"
+    },
+    {
+        "name": "Wood Normal",
+        "src": "/textures/wood_normal.png",
+        "type": "normalMap"
     }
 ]
