@@ -17,8 +17,10 @@ export default class SetSceneColor extends Command {
      * 
      * @returns {void}
      */
-    async execute() {
-        const { viewConfiguration } = this.invoker.options.context.view
-        viewConfiguration.sceneConfig.instance.background = this.color
+    execute() {
+        const { viewConfiguration } = this.invoker.options.view
+        const scene = viewConfiguration.sceneConfig.instance
+
+        scene.background = this.color
     }
 }

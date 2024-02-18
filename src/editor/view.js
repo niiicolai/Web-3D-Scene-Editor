@@ -52,7 +52,8 @@ export class ViewConfiguration {
 }
 
 export default class View {
-    constructor(canvas, viewConfiguration) {
+    constructor(canvas, viewConfiguration, frameRate = 1000 / 60) {
+
         if (!(canvas instanceof HTMLCanvasElement)) {
             throw new Error('Must be a HTMLCanvasElement')
         }
@@ -61,13 +62,20 @@ export default class View {
             throw new Error('Must be a ViewConfiguration')
         }
 
+        if (typeof frameRate !== 'number') {
+            throw new Error('Must be a number')
+        }
+
         this.canvas = canvas
         this.viewConfiguration = viewConfiguration
+        this.frameRate = frameRate
+        this.interval = null
         this.initView()
     }
 
     initView() {
-        const { cameraConfig, rendererConfig, gridConfig, sceneConfig } = toRaw(this.viewConfiguration)
+        //const { objects } = context.handlers
+        const { cameraConfig, rendererConfig, gridConfig, sceneConfig, lightConfig } = toRaw(this.viewConfiguration)
 
         this.scene = sceneConfig.instance
 
@@ -81,13 +89,33 @@ export default class View {
 
         this.grid = gridConfig.instance
         this.scene.add(this.grid);
-    }
-
-    initLight(objectsHandler) {
-        for (const lightConfig of this.viewConfiguration.lightConfig.instances) {
+        
+        const lightInstances = lightConfig.instances
+        for (const lightConfig of lightInstances) {
             const { instance, position } = lightConfig
             instance.position.copy(position)
-            objectsHandler.add(instance)
+            this.scene.add(instance)
+        }
+    }
+
+    clear() {
+        this.renderer.dispose()
+        this.controls.dispose()
+        this.scene.remove(this.grid)
+        this.scene = null
+        this.camera = null
+        this.renderer = null
+        this.controls = null
+        this.grid = null
+    }
+
+    startLoop() {
+        this.interval = setInterval(() => this.render(), this.frameRate)
+    }
+
+    stopLoop() {
+        if (this.interval) {
+            clearInterval(this.interval)
         }
     }
 
@@ -102,10 +130,5 @@ export default class View {
 
         controls.update();
         renderer.render(scene, camera);
-    }
-
-    dispose() {
-        this.renderer.dispose()
-        this.controls.dispose()
     }
 }

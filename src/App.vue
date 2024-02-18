@@ -7,7 +7,7 @@ import Settings from './components/Settings.vue';
 import Inspector from './components/Inspector.vue';
 import Editor from './editor/vue/components/Editor.vue';
 
-import { ViewConfiguration } from './editor/handlers/view.js';
+import { ViewConfiguration } from './editor/view.js';
 import { ref, onMounted } from 'vue';
 
 const frameRate = 15;
@@ -22,8 +22,9 @@ onMounted(async () => {
   const materials = await fetch('/materials.json').then(res => res.json());
   const textures = await fetch('/textures.json').then(res => res.json());
   const objects = await fetch('/objects.json').then(res => res.json());
+  const scene = await fetch('/scene.json').then(res => res.json());
 
-  preload.value = { meshes, materials, textures, objects }
+  preload.value = { meshes, materials, textures, objects, scene };
   isInitialized.value = true;
 })
 </script>
@@ -34,12 +35,14 @@ onMounted(async () => {
   <div v-if="isInitialized">
     <Editor :preload="preload" :viewConfiguration="viewConfiguration" :frameRate="frameRate">
       <template v-slot:executing="{ editor }">
-        <div class="fixed top-0 left-0 flex items-start justify-start gap-3 p-3">
+        <div class="bg-gray-500/50 shadow-md text-white fixed top-3 bottom-3 left-3 rounded">
           <Inspector :editor="editor" />
-          <Tools :editor="editor" />
         </div>
         
-        <Settings :editor="editor" />        
+        <div class="fixed top-0 right-0 p-3 flex flex-col gap-2 items-end">
+          <Tools :editor="editor" />
+          <Settings :editor="editor" />
+        </div>    
       </template>
 
       <template v-slot:initializing="{ editor }">

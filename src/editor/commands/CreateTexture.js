@@ -1,8 +1,7 @@
 import * as THREE from 'three'
 import { Command } from '../abstractions/Commands.js';
-import Cache from '../abstractions/Cache.js';
 
-export default class LoadTexture extends Command {
+export default class CreateTexture extends Command {
     constructor(name, src, type) {
         super()
 
@@ -29,7 +28,7 @@ export default class LoadTexture extends Command {
      * @returns {void}
      */
     async execute() {
-        const cache = this.invoker.options.context.textureCache
+        const cache = this.invoker.options.plugins.caches.find('textures')
         if (!cache) {
             throw new Error('Textures Cache not found')
         }

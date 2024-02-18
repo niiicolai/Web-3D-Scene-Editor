@@ -26,7 +26,7 @@
 
 <script setup>
 import { useEditor } from '../composables/useEditor.js'
-import { ViewConfiguration } from '../../handlers/view.js';
+import { ViewConfiguration } from '../../view.js';
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const canvas = ref(null)

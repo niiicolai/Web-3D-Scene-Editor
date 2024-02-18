@@ -46,4 +46,8 @@ export default class Tool {
     isReadyToDeselect() {
         return true
     }
+
+    static transferState(fromTool, toTool) {
+        toTool.selected = fromTool.selected
+    }
 }

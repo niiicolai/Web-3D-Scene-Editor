@@ -1,8 +1,7 @@
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { Command } from '../abstractions/Commands.js';
-import Cache from '../abstractions/Cache.js';
 
-export default class LoadMesh extends Command {
+export default class CreateMesh extends Command {
     constructor(name, src, subMeshConfigurations) {
         super()
 
@@ -39,7 +38,7 @@ export default class LoadMesh extends Command {
      * @returns {void}
      */
     async execute() {
-        const meshCache = this.invoker.options.context.meshCache
+        const meshCache = this.invoker.options.plugins.caches.find('meshes')
         if (!meshCache) {
             throw new Error('Mesh cache not found')
         }
@@ -50,7 +49,7 @@ export default class LoadMesh extends Command {
             throw new Error('Mesh already loaded')
         }
         
-        const materialCache = this.invoker.options.context.materialCache
+        const materialCache = this.invoker.options.plugins.caches.find('materials')
         if (!materialCache) {
             throw new Error('Material cache not found')
         }

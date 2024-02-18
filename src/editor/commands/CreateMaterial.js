@@ -1,8 +1,7 @@
 import * as THREE from 'three'
 import { Command } from '../abstractions/Commands.js';
-import Cache from '../abstractions/Cache.js';
 
-export default class LoadMaterial extends Command {
+export default class CreateMaterial extends Command {
     constructor(name, type, textureNames) {
         super()
 
@@ -35,7 +34,7 @@ export default class LoadMaterial extends Command {
      * @returns {void}
      */
     async execute() {
-        const materialCache = this.invoker.options.context.materialCache
+        const materialCache = this.invoker.options.plugins.caches.find('materials')
         if (!materialCache) {
             throw new Error('Material cache not found')
         }
@@ -46,7 +45,7 @@ export default class LoadMaterial extends Command {
             throw new Error('Material already loaded')
         }
 
-        const textureCache = this.invoker.options.context.textureCache
+        const textureCache = this.invoker.options.plugins.caches.find('textures')
         if (!textureCache) {
             throw new Error('Textures cache not found')
         }

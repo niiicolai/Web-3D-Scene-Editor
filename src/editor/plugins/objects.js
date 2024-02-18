@@ -1,27 +1,50 @@
-import Cache from "../abstractions/Cache.js"
+import Plugin from "../abstractions/Plugin.js"
 import * as THREE from "three"
 
-export default class Objects {
-    constructor(scene, meshCache) {
+export default class Objects extends Plugin {
+    constructor() {
+        super();
+
+        this.objects = []
+        this.scene = null
+        this.meshCache = null
+    }
+
+    setup(context) {
+        const { scene } = context.options.view
+        const meshCache = context.options.plugins.caches.find('meshes')
         
-        if (!(scene instanceof THREE.Scene)) {
-            throw new Error('Must be a THREE.Scene')
+        if (scene === null) {
+            throw new Error('Unable to find scene')
         }
 
-        if (!(meshCache instanceof Cache)) {
-            throw new Error('Must be a Cache')
+        if (meshCache === null) {
+            throw new Error('Unable to find meshCache')
         }
 
         this.scene = scene
         this.meshCache = meshCache
+    }
+
+    clear() {
+        if (this.scene !== null) {
+            for (const object of this.objects) {
+                this.scene.remove(object)
+            }
+        }
+
         this.objects = []
     }
 
     addMeshByName(meshName) {
+        if (this.scene === null || this.meshCache === null) {
+            throw new Error('Must execute setup first')
+        }
+
         if (typeof meshName !== 'string') {
             throw new Error('Must be a string')
         }
-
+        
         const clone = this.meshCache.clone(meshName)
         if (!clone) {
             throw new Error('Unable to clone mesh')
@@ -33,6 +56,10 @@ export default class Objects {
     }
 
     add(object) {
+        if (this.scene === null || this.meshCache === null) {
+            throw new Error('Must execute setup first')
+        }
+
         if (!(object instanceof THREE.Object3D)) {
             throw new Error('Must be a THREE.Object3D')
         }
@@ -45,14 +72,6 @@ export default class Objects {
         this.objects.push(object)
         this.scene.add(object)
         return object
-    }
-
-    clear() {
-        for (const object of this.objects) {
-            this.scene.remove(object)
-        }
-
-        this.objects = []
     }
 
     static getLightHelper(light) {

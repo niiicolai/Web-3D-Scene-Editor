@@ -20,7 +20,8 @@ export default class CreateObject extends Command {
      * @returns {void}
      */
     async execute() {
-        const mesh = this.invoker.options.context.objects.addMeshByName(this.meshName)
+        console.log(this)
+        const mesh = this.invoker.options.plugins.objects.addMeshByName(this.meshName)
         
         if (this.position) {
             mesh.position.set(this.position.x, this.position.y, this.position.z)

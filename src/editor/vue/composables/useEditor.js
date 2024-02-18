@@ -1,12 +1,12 @@
 import { ref } from 'vue'
-import { ViewConfiguration } from '../../handlers/view.js'
+import { ViewConfiguration } from '../../view.js'
 
 import Editor from '../../editor.js'
-import LoadMesh from '../../commands/LoadMesh.js'
-import LoadMaterial from '../../commands/LoadMaterial.js'
-import LoadTexture from '../../commands/LoadTexture.js'
+import CreateMesh from '../../commands/CreateMesh.js'
+import CreateMaterial from '../../commands/CreateMaterial.js'
+import CreateTexture from '../../commands/CreateTexture.js'
 import CreateObject from '../../commands/CreateObject.js'
-
+import SetSceneCubeMap from '../../commands/SetSceneCubeMap.js'
 const editor = ref(null)
 
 export const useEditor = () => {
@@ -21,19 +21,19 @@ export const useEditor = () => {
 
         if (preload.textures) {
             for (const texture of preload.textures) {
-                await editor.value.invoke(new LoadTexture(texture.name, texture.src, texture.type))
+                await editor.value.invoke(new CreateTexture(texture.name, texture.src, texture.type))
             }
         }
 
         if (preload.materials) {
             for (const material of preload.materials) {
-                await editor.value.invoke(new LoadMaterial(material.name, material.type, material.textures))
+                await editor.value.invoke(new CreateMaterial(material.name, material.type, material.textures))
             }
         }
 
         if (preload.meshes) {
             for (const mesh of preload.meshes) {
-                await editor.value.invoke(new LoadMesh(mesh.name, mesh.src, mesh.subMeshConfigurations))
+                await editor.value.invoke(new CreateMesh(mesh.name, mesh.src, mesh.subMeshConfigurations))
             }
         }
 
@@ -41,8 +41,19 @@ export const useEditor = () => {
             for (const object of preload.objects) {
                 await editor.value.invoke(new CreateObject(object.name, object.position, object.rotation, object.scale))
             }
-        }        
- 
+        }
+        
+        if (preload.scene) {
+            if (preload.scene.color) {
+                await editor.value.invoke(new SetSceneColor(preload.scene.color))
+            }
+            
+            if (preload.scene.cubeMap) {
+                const { path, px, nx, py, ny, pz, nz } = preload.scene.cubeMap
+                await editor.value.invoke(new SetSceneCubeMap(path, px, py, pz, nx, ny, nz))
+            }
+        }
+
         editor.value.resume()
     }
 
@@ -90,8 +101,20 @@ export const useEditor = () => {
         return editor.value.isTool(tool)
     }
 
-    const invoke = (command) => {
-        editor.value.invoke(command)
+    const invoke = async (command) => {
+        await editor.value.invoke(command)
+    }
+
+    const createReader = (reader) => {
+        const context = editor.value.context
+
+        if (!context) {
+            throw new Error('Context not found')
+        }
+
+        reader.setContext(context)
+
+        return reader
     }
 
     return {
@@ -108,6 +131,7 @@ export const useEditor = () => {
         activateTool,
         deactivateTool,
         isTool,
-        invoke
+        invoke,
+        createReader
     }
 }

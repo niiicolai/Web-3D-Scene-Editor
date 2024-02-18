@@ -2,10 +2,13 @@ import { Context } from './abstractions/States.js'
 import { Invoker } from './abstractions/Commands.js'
 import Tool from './abstractions/Tool.js'
 
-import { ViewConfiguration } from './handlers/view.js'
-import Events from './handlers/events.js'
-import Update from './handlers/update.js'
-import Tools from './handlers/tools.js'
+import { ViewConfiguration } from './view.js'
+import Events from './plugins/events.js'
+import Tools from './plugins/tools.js'
+import Objects from './plugins/objects.js'
+import Selector from './plugins/selector.js'
+import Caches from './plugins/caches.js'
+import View from './view.js'
 
 import Initializing from './states/Initializing.js'
 import Executing from './states/Executing.js'
@@ -26,21 +29,75 @@ export default class Editor {
         if (typeof frameRate !== 'number') {
             throw new Error('Must be a number')
         }
+        
+        /**
+         * The editor's 3D view.
+         * Configures a basic THREE.js scene.
+         */
+        this.view = new View(canvas, viewConfiguration, frameRate)
 
-        this.canvas = canvas
-        this.frameRate = frameRate
-        this.viewConfiguration = viewConfiguration
+        /**
+         * The editor's context.
+         * Controls the state of the editor.
+         */
+        this.context = new Context(new Stopped(), this)
+
+        /**
+         * The editor's Invoker.
+         * Controls the execution of external commands.
+         */
         this.invoker = new Invoker(this)
-        this.context = new Context(new Stopped(), { 
-            events: new Events(this.canvas), 
-            update: new Update(this.frameRate),
-            tools: new Tools()
-        })
+
+        /**
+         * The editor's plugins.
+         * Controls the functionality of the editor.
+         * The plugins below are the default plugins.
+         */
+        this.plugins = {
+            /**
+             * The events plugin handles mouse and keyboard events
+             * when the user interacts with the canvas.
+             */
+            events: new Events(canvas),
+
+            /**
+             * The tools plugin handles the activation and deactivation
+             * of a tool that can interact with selected objects.
+             */
+            tools: new Tools(),
+
+            /**
+             * The objects plugin handles the adding and removing of objects
+             * from the scene. Every object in this container is a THREE.Object3D.
+             */
+            objects: new Objects(),
+            
+            /**
+             * The selector plugin handles the selection of objects in the scene.
+             * It uses a raycaster to determine which object is selected.
+             */
+            selector: new Selector(),
+            
+            /**
+             * The caches plugin handles the caching of objects.
+             * It is used to specifically cache 3D resources,
+             * such as meshes, textures, and materials.
+             */
+            caches: new Caches()
+        }
+    }
+
+    addPlugin(key, plugin) {
+        if (this.plugins[key]) {
+            throw new Error('Plugin already exists')
+        }
+
+        this.plugins[key] = plugin
     }
 
     start() {
         if (this.isState(Stopped) || this.context.state == null) {
-            this.context.changeState(new Initializing(this.canvas, this.viewConfiguration))
+            this.context.changeState(new Initializing())
         } else {
             throw new Error('Cannot start when not stopped')
         }
@@ -75,11 +132,11 @@ export default class Editor {
     }
 
     addEventListener(event, callback) {
-        this.context.options.events.addEventListener(event, callback)
+        this.plugins.events.addEventListener(event, callback)
     }
 
     removeEventListener(event, callback) {
-        this.context.options.events.removeEventListener(event, callback)
+        this.plugins.events.removeEventListener(event, callback)
     }
 
     activateTool(tool) {
@@ -87,15 +144,15 @@ export default class Editor {
             throw new Error('Must be a Tool')
         }
 
-        this.context.options.tools.setTool(tool)
+        this.plugins.tools.setTool(tool)
     }
 
     deactivateTool() {
-        this.context.options.tools.removeTool()
+        this.plugins.tools.removeTool()
     }
 
     isTool(tool) {
-        return this.context.options.tools.isTool(tool)
+        return this.plugins.tools.isTool(tool)
     }
 
     async invoke(command) {

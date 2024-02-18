@@ -13,8 +13,8 @@ export default class SetGridVisibility extends Command {
      * 
      * @returns {void}
      */
-    async execute() {
-        const { viewConfiguration } = this.invoker.options.context.view
+    execute() {
+        const { viewConfiguration } = this.invoker.options.view
         const { gridConfig } = viewConfiguration
         gridConfig.instance.visible = this.visibility
     }

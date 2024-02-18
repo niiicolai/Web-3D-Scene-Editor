@@ -1,5 +1,4 @@
 
-
 class Command {
     constructor() {
         this.invoker = null;
@@ -20,10 +19,14 @@ class Invoker {
     }
 
     setCommand(command) {
+        if (!(command instanceof Command)) {
+            throw new Error('Must be a Command')
+        }
+
         this.command = command
         this.command?.setInvoker(this)
     }
-    
+
     async execute() {
         if (this.command) {
             await this.command.execute()
