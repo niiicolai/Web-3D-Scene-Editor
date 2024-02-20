@@ -21,6 +21,13 @@ const canvas = document.getElementById('canvas');
 const editor = new Editor(canvas);
 ```
 
+### Starting the Editor: 
+Start the editor by calling the start method. This initializes the editor's state and begins rendering the 3D scene.
+
+```javascript
+editor.start();
+```
+
 ### Adding Plugins: 
 *Note: Plugins should be added using addPlugin(name, implementation) before executing start to ensure the lifecycle methods are called correctly.*
 
@@ -73,20 +80,12 @@ const randomSceneColorPlugin = new RandomSceneColorPlugin();
 editor.addPlugin('randomSceneColorPlugin', randomSceneColorPlugin);
 ```
 
-### Starting the Editor: 
-Start the editor by calling the start method. This initializes the editor's state and begins rendering the 3D scene.
-
-```javascript
-editor.start();
-```
-
 ### Interacting with the Editor: 
 Use the editor's API methods to interact with the scene, manipulate objects, activate tools, and execute commands.
 The editor got two abstractions that can be used to modify the behavior of the editor, Command and Tool. 
 
 #### Command
-Commands are executed instantly when they are passed to the editor's `invoke(command)` method. They are designed to be executed when the editor is not stopped, or in other words, when the state of the editor is Executing or Paused. 
-
+Commands are executed instantly when passed to the editor's `invoke(command)` method. They are designed to execute when the editor is not stopped, or in other words, when the state of the editor is Executing or Paused.
 
 ```javascript
 // Example: Executing a command
@@ -94,19 +93,64 @@ const command = new CustomCommand();
 await editor.invoke(command);
 ```
 
+#### Example Command: Random Scene Color
+The following example demonstrates how to define a simple command that changes the scene's background to a random color whenever it is invoked on an editor instance.
+
+```javascript
+// Define the SetRandomSceneColorCommand class
+export default class SetRandomSceneColorCommand extends Command {
+    constructor() {
+        super();
+    }
+
+    /**
+     * Execute the command
+     */
+    execute() {
+        const { viewConfiguration } = this.invoker.options.view
+        const scene = viewConfiguration.sceneConfig.instance
+
+        const r = Math.floor(Math.random() * 256);
+        const g = Math.floor(Math.random() * 256);
+        const b = Math.floor(Math.random() * 256);
+
+        scene.background = new THREE.Color(r, g, b);
+    }
+}
+
+// Instantiate the SetRandomSceneColorCommand and add invoke it
+// on the editor to instantly change the scene's background to a random color
+const setRandomSceneColorCommand = new SetRandomSceneColorCommand();
+editor.invoke(setRandomSceneColorCommand);
+```
+
 #### Tool
+The Tool API is a built-in plugin designed to hold a reference to an active tool. Whenever a tool is active, it will automatically receive information about the dynamic object selected within the 3D scene, added using the 'Object Plugin'.
+
+The editor currently implements four built-in tools:
+- Move tool
+- Scale tool
+- Rotate tool
+- Mirror tool
+
 ```javascript
 // Example: Activating a tool
 const moveTool = new MoveTool();
 editor.activateTool(moveTool);
 ```
 
+#### Example Tool: TODO
+
+
 ## Architecture Overview
 The 3D Editor follows a modular architecture, with the following key components:
 
 **View:** Manages the 3D viewport and rendering of the scene using THREE.js.
+
 **Context:** Controls the state of the editor and manages state transitions.
+
 **Invoker:** Executes external commands using the Command Pattern.
+
 **Plugins:** Extends the editor's functionality with custom features and behaviors.
 
 ## Contributing
