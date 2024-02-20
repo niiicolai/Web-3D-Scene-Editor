@@ -24,10 +24,14 @@ import RotateIcon from './Icons/RotateIcon.vue';
 import ScaleIcon from './Icons/ScaleIcon.vue';
 import MirrorIcon from './Icons/MirrorIcon.vue';
 
-import MoveTool from '../editor/tools/MoveTool.js';
-import RotateTool from '../editor/tools/RotateTool.js';
-import ScaleTool from '../editor/tools/ScaleTool.js';
-import MirrorTool from '../editor/tools/MirrorTool.js';
+import ActivateTool from '../editor/plugins/tool/commands/ActivateTool.js';
+import DeactivateTool from '../editor/plugins/tool/commands/DeactivateTool.js';
+
+import MoveTool from '../editor/plugins/tool/tools/MoveTool.js';
+import RotateTool from '../editor/plugins/tool/tools/RotateTool.js';
+import ScaleTool from '../editor/plugins/tool/tools/ScaleTool.js';
+import MirrorTool from '../editor/plugins/tool/tools/MirrorTool.js';
+
 
 const props = defineProps({
   editor: {
@@ -44,10 +48,10 @@ const tools = ref([
 ]);
 
 const toggleTool = (tool) => {
-  if (props.editor.isTool(tool)) {
-    props.editor.deactivateTool();
+  if (tool.isActive) {
+    props.editor.invoke(new DeactivateTool());
   } else {
-    props.editor.activateTool(tool);
+    props.editor.invoke(new ActivateTool(tool));
   }
 }
 </script>

@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import ReadObjects from '../editor/readers/ReadObjects.js';
+import ReadObjects from '../editor/plugins/object/readers/ReadObjects.js';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -17,6 +17,6 @@ const props = defineProps({
     }
 });
 
-const readObjects = props.editor.createReader(new ReadObjects());
+const readObjects = props.editor.newReader(ReadObjects);
 const objects = computed(() => readObjects.read());
 </script>

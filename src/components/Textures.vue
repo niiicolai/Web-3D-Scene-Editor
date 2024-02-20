@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import ReadCache from '../editor/readers/ReadCache.js';
+import ReadCache from '../editor/plugins/cache/readers/ReadCache.js';
 
 import { computed } from 'vue';
 const props = defineProps({
@@ -18,6 +18,6 @@ const props = defineProps({
     }
 });
 
-const readTextures = props.editor.createReader(new ReadCache('textures'));
+const readTextures = props.editor.newReader(ReadCache, 'textures');
 const textures = computed(() => readTextures.read()); 
 </script>

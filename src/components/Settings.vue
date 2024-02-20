@@ -11,7 +11,7 @@
 <script setup>
 import { ref } from 'vue';
 import GridIcon from './Icons/GridIcon.vue';
-import SetGridVisibility from '../editor/commands/SetGridVisibility.js';
+import SetGridVisibility from '../editor/src/view/commands/SetGridVisibility.js';
 
 const props = defineProps({
   editor: {

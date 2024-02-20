@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import ReadCache from '../editor/readers/ReadCache.js';
+import ReadCache from '../editor/plugins/cache/readers/ReadCache.js';
 
 import { computed } from 'vue';
 const props = defineProps({
@@ -17,6 +17,6 @@ const props = defineProps({
     }
 });
 
-const readMeshes = props.editor.createReader(new ReadCache('meshes'));
+const readMeshes = props.editor.newReader(ReadCache, 'meshes');
 const meshes = computed(() => readMeshes.read());
 </script>

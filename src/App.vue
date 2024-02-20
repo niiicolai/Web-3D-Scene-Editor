@@ -5,9 +5,9 @@ import Loader from './components/Loader.vue';
 import Tools from './components/Tools.vue';
 import Settings from './components/Settings.vue';
 import Inspector from './components/Inspector.vue';
-import Editor from './editor/vue/components/Editor.vue';
+import Editor from './components/Editor.vue';
 
-import { ViewConfiguration } from './editor/view.js';
+import { ViewConfiguration } from './editor/editor.js';
 import { ref, onMounted } from 'vue';
 
 const frameRate = 15;

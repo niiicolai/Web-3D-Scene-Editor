@@ -21,8 +21,8 @@
 
 <script setup>
 import * as THREE from 'three';
-import ReadView from '../editor/readers/ReadView.js';
-import SetSceneColor from '../editor/commands/SetSceneColor.js';
+import ReadScene from '../editor/src/view/readers/ReadScene.js';
+import SetSceneColor from '../editor/src/view/commands/SetSceneColor.js';
 import { ref, computed } from 'vue';
 
 const props = defineProps({
@@ -32,8 +32,8 @@ const props = defineProps({
     }
 });
 
-const readView = props.editor.createReader(new ReadView());
-const view = computed(() => readView.read());
+const readView = props.editor.newReader(ReadScene);
+const scene = computed(() => readView.read());
 
 const colorInput = ref(0x000000)
 const setBackgroundColor = () => {
@@ -42,12 +42,15 @@ const setBackgroundColor = () => {
 }
 
 const background = computed(() => {
-    const scene = view.value.scene;
-    if (scene.background instanceof THREE.Color) {
-        return "#" + scene.background.getHexString();
+    if (scene.value === null) {
+        return "No scene";
     }
 
-    if (scene.background instanceof THREE.Texture) {
+    if (scene.value.background instanceof THREE.Color) {
+        return "#" + scene.value.background.getHexString();
+    }
+
+    if (scene.value.background instanceof THREE.Texture) {
         return "Cube Texture";
     }
 

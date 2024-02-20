@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import ReadCache from '../editor/readers/ReadCache.js';
+import ReadCache from '../editor/plugins/cache/readers/ReadCache.js';
 
 import { computed } from 'vue';
 const props = defineProps({
@@ -17,6 +17,6 @@ const props = defineProps({
     }
 });
 
-const readMaterials = props.editor.createReader(new ReadCache('materials'));
+const readMaterials = props.editor.newReader(ReadCache, 'materials');
 const materials = computed(() => readMaterials.read());
 </script>
