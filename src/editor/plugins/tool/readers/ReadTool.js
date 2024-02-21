@@ -10,8 +10,8 @@ export default class ReadTool extends Reader {
     /**
      * @constructor
      */
-    constructor() {
-        super();
+    constructor(editor) {
+        super(editor);
     }
 
     /**
@@ -20,6 +20,6 @@ export default class ReadTool extends Reader {
      * @returns {Tool|null} the active tool
      */
     read() {
-        return this.context.options.plugins.tools.tool;
+        return this.editor.plugins.tools.getTool();
     }
 }

@@ -1,15 +1,35 @@
 import BasePlugin from '../../src/abstractions/BasePlugin.js';
 import Tool from './src/Tool.js'
 
+let tool = null
+
+function onPointerDown(object) {
+    if (tool) tool.onPointerDown(object.event)
+}
+
+function onPointerUp(object) {
+    if (tool) tool.onPointerUp(object.event)
+}
+
+function onPointerMove(object) {
+    if (tool) tool.onPointerMove(object.event)
+}
+
+function onSelected(object) {
+    if (tool) tool.onSelected(object.event.event)
+}
+
+function onDeselected(object) {
+    if (tool) tool.onDeselected(object.event.event)
+}
+
 /**
  * @extends BasePlugin
  * @class
  * @classdesc A plugin used to manage tools
  * @property {Tool|null} tool
  * @property {Events|null} events
- * @property {Object} callbacks
- * @property {Scene} scene
- * @property {Camera} camera
+ * @property {Context} context
  */
 export default class Tools extends BasePlugin {
 
@@ -31,18 +51,8 @@ export default class Tools extends BasePlugin {
      */
     setup(context) {
         const { events } = context.options.plugins
-        const { scene, camera } = context.options.view
 
-        if (events === null) {
-            throw new Error('Unable to find events')
-        }
-
-        if (scene === null) {
-            throw new Error('Unable to find scene')
-        }
-
-        this.scene = scene
-        this.camera = camera
+        this.context = context
         this.events = events
     }
 
@@ -86,13 +96,12 @@ export default class Tools extends BasePlugin {
             throw new Error('Must be a Tool')
         }
         
-        if (this.tool) {
-            Tool.transferState(this.tool, newTool)
-            this.tool.deactivate()
+        if (tool) {
+            tool.deactivate()
         }
 
-        this.tool = newTool
-        this.tool.activate({ scene: this.scene, camera: this.camera })
+        tool = newTool
+        tool.activate(this.context.options)
     }
 
     /**
@@ -101,60 +110,19 @@ export default class Tools extends BasePlugin {
      * @returns {void}
      */
     removeTool() {
-        if (this.tool) {
-            this.tool.deactivate()
-            this.tool = null
+        if (tool) {
+            tool.deactivate()
+            tool = null
         }
     }
 
     /**
-     * Handle pointer down event
+     * Get the active tool
      * 
-     * @param {Object} object
-     * @returns {void}
+     * @returns {Tool|null} the active tool
      */
-    onPointerDown(object) {
-        if (this.tool) this.tool.onPointerDown(object)
-    }
-
-    /**
-     * Handle pointer up event
-     * 
-     * @param {Object} object
-     * @returns {void}
-     */
-    onPointerUp(object) {
-        if (this.tool) this.tool.onPointerUp(object)
-    }
-
-    /**
-     * Handle pointer move event
-     * 
-     * @param {Object} object
-     * @returns {void}
-     */
-    onPointerMove(object) {
-        if (this.tool) this.tool.onPointerMove(object)
-    }
-
-    /**
-     * Handle selected event
-     * 
-     * @param {Object} object
-     * @returns {void}
-     */
-    onSelected(object) {
-        if (this.tool) this.tool.onSelected(object)
-    }
-
-    /**
-     * Handle deselected event
-     * 
-     * @param {Object} object
-     * @returns {void}
-     */
-    onDeselected(object) {
-        if (this.tool) this.tool.onDeselected(object)
+    getTool() {
+        return tool
     }
 
     /**
@@ -163,11 +131,11 @@ export default class Tools extends BasePlugin {
      * @param {Tools} tools
      */
     static setupEvents = (tools) => {
-        tools.events.addListener('pointerdown', tools.onPointerDown.bind(tools))
-        tools.events.addListener('pointerup', tools.onPointerUp.bind(tools))
-        tools.events.addListener('pointermove', tools.onPointerMove.bind(tools))
-        tools.events.addListener('select', tools.onSelected.bind(tools))
-        tools.events.addListener('deselect', tools.onDeselected.bind(tools))
+        tools.events.addListener('pointerdown', onPointerDown)
+        tools.events.addListener('pointerup', onPointerUp)
+        tools.events.addListener('pointermove', onPointerMove)
+        tools.events.addListener('select', onSelected)
+        tools.events.addListener('deselect', onDeselected)
     }
 
     /**
@@ -176,10 +144,10 @@ export default class Tools extends BasePlugin {
      * @param {Tools} tools
      */
     static clearEvents = (tools) => {
-        tools.events.removeListener('pointerdown', tools.onPointerDown.bind(tools))
-        tools.events.removeListener('pointerup', tools.onPointerUp.bind(tools))
-        tools.events.removeListener('pointermove', tools.onPointerMove.bind(tools))
-        tools.events.removeListener('select', tools.onSelected.bind(tools))
-        tools.events.removeListener('deselect', tools.onDeselected.bind(tools))
+        tools.events.removeListener('pointerdown', onPointerDown)
+        tools.events.removeListener('pointerup', onPointerUp)
+        tools.events.removeListener('pointermove', onPointerMove)
+        tools.events.removeListener('select', onSelected)
+        tools.events.removeListener('deselect', onDeselected)
     }
 }

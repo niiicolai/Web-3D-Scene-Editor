@@ -1,9 +1,10 @@
 
+let selected = null
+
 /**
  * @class
  * @classdesc Base class for all tools.
  * @property {Object} options
- * @property {Object} selected
  * @property {boolean} isActive
  */
 export default class Tool {
@@ -13,7 +14,6 @@ export default class Tool {
      */
     constructor() {
         this.options = null
-        this.selected = null
         this.isActive = false
     }
 
@@ -38,13 +38,22 @@ export default class Tool {
     }
 
     /**
+     * Get the selected object
+     * 
+     * @returns {Object}
+     */
+    getSelected() {
+        return selected
+    }
+
+    /**
      * Set the selected object
      * 
      * @param {Object} object
      * @returns {void}
      */
     setSelected(object) {
-        this.selected = object
+        selected = object
     }
 
     /**
@@ -54,12 +63,11 @@ export default class Tool {
      * @returns {void}
      */
     onSelected(object) {
-        if (this.selected && this.selected !== object
-            && !this.isReadyToDeselect()) {
+        if (selected && selected !== object && !this.isReadyToDeselect()) {
             return
         }
-
-        this.selected = object
+        
+        selected = object
     }
 
     /**
@@ -73,7 +81,7 @@ export default class Tool {
             return
         }
 
-        this.selected = null
+        selected = null
     }
 
     /**
@@ -113,17 +121,5 @@ export default class Tool {
      */
     isReadyToDeselect() {
         return true
-    }
-
-    /**
-     * Transfer state from one tool to another
-     * 
-     * @param {Tool} fromTool
-     * @param {Tool} toTool
-     * @returns {void}
-     */
-    static transferState(fromTool, toTool) {
-        toTool.selected = fromTool.selected
-        fromTool.selected = null
     }
 }

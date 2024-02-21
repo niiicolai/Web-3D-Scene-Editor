@@ -1,6 +1,12 @@
 import BasePlugin from '../../src/abstractions/BasePlugin.js';
 import * as THREE from 'three'
 
+const eventDispatcher = new THREE.EventDispatcher()
+
+function dispatch(event) {
+    eventDispatcher.dispatchEvent({type: event.type, event})
+}
+
 /**
  * @extends BasePlugin
  * @class
@@ -23,7 +29,6 @@ export default class Events extends BasePlugin {
 
         this.canvas = canvas
         this.isInitialized = false
-        this.eventDispatcher = new THREE.EventDispatcher()
     }
 
     /**
@@ -76,7 +81,7 @@ export default class Events extends BasePlugin {
         if (!this.isInitialized) {
             return
         }
-
+        
         Events.setupDispatcher(this)
     }
 
@@ -98,7 +103,7 @@ export default class Events extends BasePlugin {
             throw new Error('Must be a function')
         }
 
-        this.eventDispatcher.addEventListener(type, listener)
+        eventDispatcher.addEventListener(type, listener)
     }
 
     /**
@@ -119,7 +124,11 @@ export default class Events extends BasePlugin {
             throw new Error('Must be a function')
         }
 
-        this.eventDispatcher.removeEventListener(type, listener)
+        eventDispatcher.removeEventListener(type, listener)
+    }
+
+    dispatchEvent(type, event) {
+        dispatch({type, event})
     }
 
     /**
@@ -129,15 +138,13 @@ export default class Events extends BasePlugin {
      * @returns {void}
      */
     static setupDispatcher = (events) => {
-        const { canvas, eventDispatcher } = events
+        const { canvas } = events
         const names = ['pointerdown', 'pointerup', 'pointermove']
-
+        
         for (const name of names) {
-            canvas.addEventListener(name, (event) => {
-                eventDispatcher.dispatchEvent({type: name, event})
-            })
+            canvas.addEventListener(name, dispatch, false)
         }
-    }
+    } 
     
     /**
      * Clear canvas event dispatcher
@@ -146,13 +153,11 @@ export default class Events extends BasePlugin {
      * @returns {void}
      */
     static clearDispatcher = (events) => {
-        const { canvas, eventDispatcher } = events
+        const { canvas } = events
         const names = ['pointerdown', 'pointerup', 'pointermove']
 
         for (const name of names) {
-            canvas.removeEventListener(name, (event) => {
-                eventDispatcher.dispatchEvent({type: name, event})
-            })
+            canvas.removeEventListener(name, dispatch, false)
         }
     }
 }

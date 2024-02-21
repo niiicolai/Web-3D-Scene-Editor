@@ -92,7 +92,7 @@ export default class Selector extends BasePlugin {
 
     onPointerUp = (object) => {
         if (this.selected) {
-            this.events.eventDispatcher.dispatchEvent({ type: 'deselect', object: this.selected })
+            this.events.dispatchEvent('deselect', this.selected)
             this.selected = null
         }
     }
@@ -101,7 +101,7 @@ export default class Selector extends BasePlugin {
         const intersect = Util.getIntersect(object, this.camera, this.objects.objects)
         if (intersect && intersect !== this.selected) {
             this.selected = Util.findParentBeforeScene(intersect, this.scene)
-            this.events.eventDispatcher.dispatchEvent({ type: 'select', object: intersect })
+            this.events.dispatchEvent('select', this.selected)
         }
     }
 
@@ -112,8 +112,8 @@ export default class Selector extends BasePlugin {
      * @returns {void}
      */
     static setupEvents = (selector) => {
-        selector.events.addListener('pointerdown', selector.onPointerDown.bind(selector))
-        selector.events.addListener('pointerup', selector.onPointerUp.bind(selector))
+        selector.events.addListener('pointerdown', selector.onPointerDown)
+        selector.events.addListener('pointerup', selector.onPointerUp)
     }
 
     /**
@@ -123,7 +123,7 @@ export default class Selector extends BasePlugin {
      * @returns {void}
      */
     static clearEvents = (selector) => {
-        selector.events.removeListener('pointerdown', selector.onPointerDown.bind(selector))
-        selector.events.removeListener('pointerup', selector.onPointerUp.bind(selector))
+        selector.events.removeListener('pointerdown', selector.onPointerDown)
+        selector.events.removeListener('pointerup', selector.onPointerUp)
     }
 }

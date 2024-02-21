@@ -1,133 +1,123 @@
 import Tool from "../src/Tool.js";
+import VisualTool from "../src/VisualTool.js";
+import Util from "../src/util.js";
 import * as THREE from "three";
 
-const createVisualTool = (moveTool) => {
-    if (moveTool.selected === null) {
-        return
+class MoveVisualTool extends VisualTool {
+    constructor(tool) {
+        super(tool)
+        this.arrows = []
     }
 
-    if (moveTool.visualTool !== null && moveTool.lastToolObject?.uuid === moveTool.selected.object.uuid) {
-        return
+    setupArrows(size) {
+        const position = new THREE.Vector3()
+        const zAxis = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), position, size.z, 0x0000ff)
+        const yAxis = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), position, size.y, 0x00ff00)
+        const xAxis = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), position, size.x, 0xff0000)
+
+        zAxis.name = 'z'
+        yAxis.name = 'y'
+        xAxis.name = 'x'
+
+        this.group.add(zAxis)
+        this.group.add(yAxis)
+        this.group.add(xAxis)
+
+        this.arrows.push(zAxis, yAxis, xAxis)
     }
 
-    if (moveTool.visualTool !== null) {
-        removeVisualTool(moveTool)
+    setupColliders(size) {
+        const wireframeMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true })
+        const zCollider = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, size.z, 10), wireframeMaterial)
+        const yCollider = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, size.y, 10), wireframeMaterial)
+        const xCollider = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, size.x, 10), wireframeMaterial)
+
+        zCollider.rotation.x = Math.PI / 2
+        xCollider.rotation.z = Math.PI / 2
+
+        zCollider.position.z += size.z / 2
+        yCollider.position.y += size.y / 2
+        xCollider.position.x += size.x / 2
+
+        zCollider.name = 'z'
+        yCollider.name = 'y'
+        xCollider.name = 'x'
+
+        zCollider.material.visible = false
+        yCollider.material.visible = false
+        xCollider.material.visible = false
+
+        this.group.add(zCollider)
+        this.group.add(yCollider)
+        this.group.add(xCollider)
+
+        this.colliders.push(zCollider, yCollider, xCollider)
     }
 
-    const { scene } = moveTool.options
-    const { object } = moveTool.selected
+    setup() {
+        super.setup()
+        
+        if (this.selected === null) {
+            return
+        }
 
-    const box = new THREE.Box3().setFromObject(object)
-    const size = box.getSize(new THREE.Vector3())
-    const center = box.getCenter(new THREE.Vector3())
-
-    const zAxis = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), center, size.z, 0x0000ff)
-    const yAxis = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), center, size.y, 0x00ff00)
-    const xAxis = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), center, size.x, 0xff0000)
-    
-    const wireframeMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true })
-    const zCapsule = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, size.z, 10), wireframeMaterial)
-    const yCapsule = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, size.y, 10), wireframeMaterial)
-    const xCapsule = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, size.x, 10), wireframeMaterial)
-    
-    zCapsule.rotation.x = Math.PI / 2
-    xCapsule.rotation.z = Math.PI / 2
-
-    zCapsule.position.copy(center)
-    zCapsule.position.z += size.z / 2
-
-    yCapsule.position.copy(center)
-    yCapsule.position.y += size.y / 2
-
-    xCapsule.position.copy(center)
-    xCapsule.position.x += size.x / 2
-
-    zAxis.name = 'z'
-    yAxis.name = 'y'
-    xAxis.name = 'x'
-
-    zCapsule.name = 'z'
-    yCapsule.name = 'y'
-    xCapsule.name = 'x'
-
-    const visualTool = new THREE.Group()
-    visualTool.add(zAxis)
-    visualTool.add(yAxis)
-    visualTool.add(xAxis)
-    visualTool.add(zCapsule)
-    visualTool.add(yCapsule)
-    visualTool.add(xCapsule)
-
-    scene.add(visualTool)
-
-    moveTool.visualTool = visualTool
-    moveTool.lastToolObject = object
-}
-
-const removeVisualTool = (moveTool) => {
-    if (moveTool.visualTool === null) {
-        return
+        const box = new THREE.Box3().setFromObject(this.selected)
+        const size = box.getSize(new THREE.Vector3())
+        this.setupArrows(size)
+        this.setupColliders(size)
     }
 
-    moveTool.options.scene.remove(moveTool.visualTool)
-    moveTool.visualTool = null
-}
+    clear() {
+        super.clear()
 
-const updateVisualTool = (moveTool) => {
-    if (moveTool.visualTool === null) {
-        return
+        for (const arrow of this.arrows) {
+            arrow.dispose()
+        }
+
+        this.arrows = []
     }
 
-    if (moveTool.selected === null) {
-        return
-    }
-
-    const { object } = moveTool.selected
-    const box = new THREE.Box3().setFromObject(object)
-    const center = box.getCenter(new THREE.Vector3())    
-    visualTool.position.copy(center)
-}
-
-const raycaster = new THREE.Raycaster()
-const selectAxis = (event, moveTool) => {
-    const { camera } = moveTool.options
-    const { visualTool } = moveTool
-
-    const mouseCoords = new THREE.Vector2()
-    mouseCoords.x = (event.clientX / window.innerWidth) * 2 - 1
-    mouseCoords.y = -(event.clientY / window.innerHeight) * 2 + 1
-
-    raycaster.setFromCamera(mouseCoords, camera)
-    const intersects = raycaster.intersectObjects(visualTool.children, true)
-    if (intersects.length > 0) {
-        return intersects[0].object
+    onPointerMove(event) {
+        if (!this.axis.isSelected) {
+            return
+        }
+        
+        const camera = this.tool.options.view.camera
+        const normal = Util.calculateNormalFromAxis(this.axis.name)
+        const { isIntersecting, intersection } = Util.calculatePlaneIntersection(event, camera, normal)
+        if (isIntersecting) {
+            intersection.sub(this.axisSelectOffset)
+            Util.clampPositionToObjectAxis(intersection, this.selected, this.axis.name)
+            this.selected.position.copy(intersection)
+            this.updatePosition()
+        }
     }
 }
 
 export default class MoveTool extends Tool {
     constructor() {
         super()
-        this.visualTool = null
+        this.visualTool = new MoveVisualTool(this)
     }
 
     activate(options) {
         super.activate(options)
-        createVisualTool(this)
+        this.visualTool.setup()
     }
 
     deactivate() {
         super.deactivate()
-        removeVisualTool(this)
+        this.visualTool.clear()
     }
 
     setSelected(object) {
         super.setSelected(object)
-        createVisualTool(this)
+        this.visualTool.setup()
     }
 
     onSelected(object) {
         super.onSelected(object)
-        createVisualTool(this)
+        this.visualTool.setup()
     }
 
     onDeselected(object) {
@@ -136,30 +126,48 @@ export default class MoveTool extends Tool {
 
     onPointerDown(object) {
         super.onPointerDown(object)
-        if (this.visualTool != null) {
-            const axis = selectAxis(object.event, this)
-            console.log('axis:', axis)
-            if (axis != null) {
-                this.axis = axis.name
-                return
-            }
+
+        /**
+         * If we select one of the axis, we don't want to deselect the object,
+         * before the move operation is finished
+         */
+        if (this.visualTool.selectAxisCollider(object)) {
+            return
         }
-        
-        if (this.selected === null && this.visualTool !== null) {
-            removeVisualTool(this)
+
+        /**
+         * If we do not select an axis, and no longer have a selected object,
+         * we want to clear the visual tool
+         */
+        if (!this.getSelected()) {
+            this.visualTool.clear()
         }
     }
 
     onPointerUp(object) {
         super.onPointerUp(object)
-        this.axis = null
+
+        /**
+         * If an axis is selected, we want to deselect it,
+         * when the mouse is released
+         */
+        this.visualTool.deselectAxisCollider()
     }
 
     onPointerMove(object) {
         super.onPointerMove(object)
+
+        /**
+         * If an axis is selected we want to move the object by the axis
+         */
+        this.visualTool.onPointerMove(object)
     }
 
     isReadyToDeselect() {
-        return true
+        /**
+         * Do not allow deselection, if an axis is selected.
+         * Because we want to finish the move operation first
+         */
+        return !this.visualTool.axis.isSelected
     }
 }
