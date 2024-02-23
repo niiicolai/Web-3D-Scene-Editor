@@ -35,20 +35,9 @@ export default class CreateObject extends Command {
      * @returns {void}
      */
     async execute() {
-        const { caches, objects } = this.invoker.options.plugins
-
-        if (caches === null) {
-            throw new Error('Dependency Error: Unable to find caches plugin')
-        }
-
-        if (objects === null) {
-            throw new Error('Dependency Error: Unable to find objects plugin')
-        }
-
+        const objects = this.invoker.options.getPlugin('objects')
+        const caches = this.invoker.options.getPlugin('caches')
         const meshCache = caches.find('meshes')
-        if (meshCache === null) {
-            throw new Error('Cache Error: Unable to find mesh cache')
-        }
 
         const mesh = meshCache.clone(this.meshName)
         if (!mesh) {

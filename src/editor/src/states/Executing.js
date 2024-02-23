@@ -10,13 +10,15 @@ export default class Executing extends State {
         /**
          * Resume all the plugins
          */
-        for (const key in this.context.options.plugins) {
-            this.context.options.plugins[key].resume()
+        const plugins = this.context.options.allPlugins()
+        for (const key in plugins) {
+            plugins[key].resume()
         }
 
         /**
          * Start the view rendering
          */
-        this.context.options.view.startRender()
+        const view = this.context.options.getView()
+        view.startRender()
     }
 }

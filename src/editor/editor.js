@@ -9,6 +9,7 @@ import Caches from './plugins/cache/caches.js'
 import Command from './src/abstractions/Command.js'
 import Reader from './src/abstractions/Reader.js'
 import Plugin from './src/abstractions/Plugin.js'
+import PluginError from './src/errors/PluginError.js'
 import ViewConfiguration from './src/view/src/ViewConfiguration.js'
 
 export default class Editor extends BaseEditor {
@@ -55,5 +56,6 @@ export {
     Command,
     Reader,
     Plugin,
+    PluginError,
     ViewConfiguration
 }

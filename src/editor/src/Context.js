@@ -1,4 +1,5 @@
 import State from './abstractions/State.js'
+import { EditorInterface } from './BaseEditor.js'
 
 /**
  * @class
@@ -12,10 +13,14 @@ export default class Context {
     /**
      * @constructor
      * @param {State} initialState
+     * @param {EditorInterface} editorInterface
      * @throws {Error} If initialState is not a state
      */
-    constructor(initialState, options={}) {
-        this.options = options
+    constructor(initialState, editorInterface) {
+        if (!(editorInterface instanceof EditorInterface)) {
+            throw new Error('BaseInterface Must be a BaseInterface')
+        }
+        this.options = editorInterface
 
         if (initialState instanceof State) {
             this.changeState(initialState)

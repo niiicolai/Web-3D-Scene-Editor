@@ -50,7 +50,7 @@ export default class Tools extends BasePlugin {
      * @throws {Error} if unable to find scene
      */
     setup(context) {
-        const { events } = context.options.plugins
+        const events = context.options.getPlugin('events')
 
         this.context = context
         this.events = events

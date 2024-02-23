@@ -19,7 +19,10 @@ const getLightHelper = (light) => {
         case 'PointLight':
             return new THREE.PointLightHelper(light, 5)
         case 'SpotLight':
-            return new THREE.SpotLightHelper(light, 5)
+            return new THREE.Mesh(
+                new THREE.SphereGeometry(.5, 16, 8),
+                new THREE.MeshBasicMaterial({ color: light.color })
+            )
         case 'AmbientLight':
             // No helper for ambient light
             return new THREE.Mesh(
@@ -31,6 +34,30 @@ const getLightHelper = (light) => {
     }
 }
 
+const createLightByType = (type, color, intensity = 1) => {
+    if (typeof type !== 'string') {
+        throw new Error('Type Must be a string')
+    }
+
+    if (typeof intensity !== 'number') {
+        throw new Error('Intensity Must be a number')
+    }
+
+    switch (type) {
+        case 'Directional Light':
+            return new THREE.DirectionalLight(color, intensity)
+        case 'Point Light':
+            return new THREE.PointLight(color, intensity)
+        case 'Spot Light':
+            return new THREE.SpotLight(color, intensity)
+        case 'Ambient Light':
+            return new THREE.AmbientLight(color, intensity)
+        default:
+            throw new Error('Unsupported light name')
+    }
+}
+
 export default {
-    getLightHelper
+    getLightHelper,
+    createLightByType
 }

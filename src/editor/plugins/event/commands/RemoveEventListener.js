@@ -1,4 +1,4 @@
-import { Command } from '../../../editor.js'
+import { Command, PluginNotFoundError } from '../../../editor.js'
 
 /**
  * @extends Command
@@ -36,6 +36,7 @@ export default class RemoveEventListener extends Command {
      * @returns {void}
      */
     async execute() {
-        this.invoker.options.plugins.events.removeEventListener(this.event, this.callback)
+        const events = this.invoker.options.getPlugin('events')
+        events.removeEventListener(this.event, this.callback)
     }
 }

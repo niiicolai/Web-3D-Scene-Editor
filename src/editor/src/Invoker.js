@@ -1,4 +1,5 @@
 import Command from './abstractions/Command.js'
+import { EditorInterface } from './BaseEditor.js'
 
 /**
  * @class
@@ -10,10 +11,14 @@ export default class Invoker {
 
     /**
      * @constructor
-     * @param {Object} options
+     * @param {EditorInterface} editorInterface
      */
-    constructor(options = {}) {
-        this.options = options
+    constructor(editorInterface) {
+        if (!(editorInterface instanceof EditorInterface)) {
+            throw new Error('BaseInterface Must be a BaseInterface')
+        }
+
+        this.options = editorInterface
     }
 
     /**

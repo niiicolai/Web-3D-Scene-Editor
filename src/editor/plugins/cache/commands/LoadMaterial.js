@@ -1,4 +1,5 @@
 import { Command } from '../../../editor.js'
+import CacheEntryDuplicationError from '../errors/CacheEntryDuplicationError.js'
 import * as THREE from 'three'
 
 /**
@@ -51,31 +52,25 @@ export default class LoadMaterial extends Command {
      * @returns {void}
      */
     async execute() {
-        const materialCache = this.invoker.options.plugins.caches.find('materials')
-        if (!materialCache) {
-            throw new Error('Material cache not found')
-        }
+        const caches = this.invoker.options.getPlugin('caches')
+        const materialCache = caches.find('materials')
 
         const cacheKey = this.name
         const cached = materialCache.find(cacheKey)
         if (cached) {
-            throw new Error('Material already loaded')
+            throw new CacheEntryDuplicationError('materials', cacheKey)
         }
 
-        const textureCache = this.invoker.options.plugins.caches.find('textures')
-        if (!textureCache) {
-            throw new Error('Textures cache not found')
-        }
+        const textureCache = caches.find('textures')
 
         const material = new THREE[this.type]()
         material.name = this.name
-        
         for (const textureName of this.textureNames) {
             const clonedTexture = textureCache.clone(textureName)
             material[clonedTexture.type] = clonedTexture.texture
         }
-        const cacheValue = {material, 
-            type: this.type, textureSources: this.textureSources}
+
+        const cacheValue = {material, type: this.type, textureNames: this.textureNames}
 
         materialCache.add(cacheKey, cacheValue)
     }

@@ -9,9 +9,10 @@ import Reader from "../../abstractions/Reader.js";
 export default class ReadScene extends Reader {
     constructor(editor) {
         super(editor);
+        this.view = this.editor.getView();
     }
 
     read() {
-        return this.editor.view.scene
+        return this.view.scene;
     }
 }

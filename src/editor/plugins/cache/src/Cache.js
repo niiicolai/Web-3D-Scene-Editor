@@ -104,4 +104,13 @@ export default class Cache {
 
     this.cache = {};
   }
+
+  /**
+   * Get the cache as an array
+   * 
+   * @returns {Array<object>}
+   */
+  toArray() {
+    return Object.values(this.cache);
+  }
 }

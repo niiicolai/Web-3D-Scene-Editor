@@ -23,7 +23,7 @@
 import * as THREE from 'three';
 import ReadScene from '../editor/src/view/readers/ReadScene.js';
 import SetSceneColor from '../editor/src/view/commands/SetSceneColor.js';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 const props = defineProps({
     editor: {
@@ -33,27 +33,33 @@ const props = defineProps({
 });
 
 const readView = props.editor.newReader(ReadScene);
-const scene = computed(() => readView.read());
+const scene = ref(readView.read());
+const background = ref('No scene');
 
 const colorInput = ref(0x000000)
-const setBackgroundColor = () => {
+const setBackgroundColor = async () => {
     const color = new THREE.Color(colorInput.value);
-    props.editor.invoke(new SetSceneColor(color));
+    await props.editor.invoke(new SetSceneColor(color));
+    scene.value = readView.read();
+    background.value = calculateBackground(scene.value.background);
 }
-
-const background = computed(() => {
-    if (scene.value === null) {
-        return "No scene";
+const calculateBackground = (background) => {
+    if (background instanceof THREE.Color) {
+        return "#" + background.getHexString();
     }
 
-    if (scene.value.background instanceof THREE.Color) {
-        return "#" + scene.value.background.getHexString();
-    }
-
-    if (scene.value.background instanceof THREE.Texture) {
+    if (background instanceof THREE.Texture) {
         return "Cube Texture";
     }
 
-    return "Unknown background type";
+    return "No scene";
+}
+
+onMounted(() => {
+    const color = scene.value.background;
+    const bgg = calculateBackground(color);
+    colorInput.value = bgg;
+    background.value = bgg;
 });
+
 </script>

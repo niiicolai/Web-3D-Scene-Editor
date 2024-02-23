@@ -30,6 +30,7 @@ export default class ActivateTool extends Command {
      * @returns {void}
      */
     async execute() {
-        this.invoker.options.plugins.tools.setTool(this.tool)
+        const tools = this.invoker.options.getPlugin('tools')
+        tools.setTool(this.tool)
     }
 }

@@ -1,11 +1,12 @@
 <script setup>
 import * as THREE from 'three';
 
-import Loader from './components/Loader.vue';
+import Loader from './components/UI/Loader.vue';
 import Tools from './components/Tools.vue';
 import Settings from './components/Settings.vue';
 import Inspector from './components/Inspector.vue';
 import Editor from './components/Editor.vue';
+import Toast from './components/Toast.vue';
 
 import { ViewConfiguration } from './editor/editor.js';
 import { ref, onMounted } from 'vue';
@@ -62,5 +63,7 @@ onMounted(async () => {
       </template>
 
     </Editor>
+
+    <Toast />
   </div>
 </template>

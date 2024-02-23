@@ -11,19 +11,22 @@ export default class Initializing extends State {
         /**
          * Setup the view
          */
-        this.context.options.view.setup(this.context)
+        const view = this.context.options.getView()
+        view.setup(this.context)
 
         /**
          * Setup all the plugins
          */
-        for (const key in this.context.options.plugins) {
-            this.context.options.plugins[key].setup(this.context)
+        const plugins = this.context.options.allPlugins()
+        for (const key in plugins) {
+            plugins[key].setup(this.context)
         }
 
         /**
          * Add the initial lights
          */
-        this.context.options.view.addLights(this.context.options.plugins.objects)
+        const objects = this.context.options.getPlugin('objects')
+        view.addLights(objects)
 
         /**
          * Move to the executing state

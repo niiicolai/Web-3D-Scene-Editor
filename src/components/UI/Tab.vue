@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { useTabs } from '../composables/tabs.js';
+import { useTabs } from '../../composables/useTabs.js';
 const props = defineProps({
     title: {
         type: String,

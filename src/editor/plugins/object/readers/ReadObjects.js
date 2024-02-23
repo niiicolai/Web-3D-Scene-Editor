@@ -12,6 +12,7 @@ export default class ReadObjects extends Reader {
      */
     constructor(editor) {
         super(editor);
+        this.objects = this.editor.getPlugin('objects');
     }
 
     /**
@@ -20,6 +21,6 @@ export default class ReadObjects extends Reader {
      * @returns {Array<object>} the objects
      */
     read() {
-        return this.editor.plugins.objects.objects;
+        return this.objects.getObjects();
     }
 }

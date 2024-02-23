@@ -10,13 +10,15 @@ export default class Paused extends State {
         /**
          * Pause all the plugins
          */
-        for (const key in this.context.options.plugins) {
-            this.context.options.plugins[key].pause()
+        const plugins = this.context.options.allPlugins()
+        for (const key in plugins) {
+            plugins[key].pause()
         }
 
         /**
          * Stop the view rendering
          */
-        this.context.options.view.stopRender()
+        const view = this.context.options.getView()
+        view.stopRender()
     }
 }

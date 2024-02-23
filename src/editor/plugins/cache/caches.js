@@ -9,6 +9,8 @@ import MeshDisposingStrategy from "./strategies/disposing/MeshStrategy.js";
 import MaterialDisposingStrategy from "./strategies/disposing/MaterialStrategy.js";
 import TextureDisposingStrategy from "./strategies/disposing/TextureStrategy.js";
 
+import CacheNotFoundError from './errors/CacheNotFoundError.js';
+
 /**
  * @extends BasePlugin
  * @class
@@ -66,6 +68,6 @@ export default class Caches extends BasePlugin {
             }
         }
 
-        return null
+        throw new CacheNotFoundError(name)
     }
 }

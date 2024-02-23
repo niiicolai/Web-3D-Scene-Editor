@@ -33,7 +33,7 @@ export default class SetSceneCubeMap extends Command {
         /**
          * Set the cube texture as the background of the scene
          */
-        const { viewConfiguration } = this.invoker.options.view
+        const { viewConfiguration } = this.invoker.options.getView()
         const scene = viewConfiguration.sceneConfig.instance
         scene.background = cubemap
     }

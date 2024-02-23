@@ -14,6 +14,6 @@ export default class TextureStrategy extends CloningStrategy {
      * @returns {Texture} the cloned texture
      */
     clone(cached) {
-        return cached.texture;
+        return {texture: cached.texture, type: cached.type};
     }
 }

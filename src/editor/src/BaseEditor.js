@@ -11,8 +11,33 @@ import Exiting from './states/Exiting.js'
 import Stopped from './states/Stopped.js'
 import Paused from './states/Paused.js'
 
+import PluginNotFoundError from './errors/PluginNotFoundError.js'
+import PluginDuplicationError from './errors/PluginDuplicationError.js'
+import PluginBaseRemoveError from './errors/PluginBaseRemoveError.js'
+
 import ViewConfiguration from './view/src/ViewConfiguration.js'
 import View from './view/view.js'
+
+/**
+ * @class
+ * @classdesc The EditorInterface class is the main interface of the editor.
+ * It exposes the methods that the context and invoker can use to interact with the editor.
+ * 
+ * @property {function} getPlugin - The method to get a plugin from the editor.
+ * @property {function} getView - The method to get the editor's 3D view.
+ * @property {function} allPlugins - The method to get all the plugins from the editor.
+ */
+export class EditorInterface {
+    constructor(editor) {
+        if (!(editor instanceof BaseEditor)) {
+            throw new Error('Must be a BaseEditor')
+        }
+
+        this.getPlugin = editor.getPlugin.bind(editor)
+        this.getView = editor.getView.bind(editor)
+        this.allPlugins = editor.allPlugins.bind(editor)
+    }
+}
 
 /**
  * @class
@@ -60,14 +85,19 @@ export default class BaseEditor {
         this.view = new View(canvas, viewConfiguration, frameRate)
 
         /**
+         * The editor's interface
+         */
+        const _interface = new EditorInterface(this)
+
+        /**
          * The editor's context.
          */
-        this.context = new Context(new Stopped(), { plugins: this.plugins, view: this.view, })
+        this.context = new Context(new Stopped(), _interface)
 
         /**
          * The editor's Invoker.
          */
-        this.invoker = new Invoker({ plugins: this.plugins, view: this.view, })
+        this.invoker = new Invoker(_interface)
     }
 
     /**
@@ -84,6 +114,47 @@ export default class BaseEditor {
         }
 
         await this.invoker.invoke(command)
+    }
+
+    /**
+     * The getView method is called to get the editor's 3D view.
+     * 
+     * @returns {View}
+     */
+    getView() {
+        return this.view
+    }
+
+    /**
+     * The getPlugin method is called to get a plugin from the editor.
+     * 
+     * @param {string} key - The key of the plugin.
+     * @throws {Error} - If the key is not a string.
+     * @throws {PluginNotFoundError} - If the plugin does not exist.
+     * @returns {object}
+     */
+    getPlugin(key) {
+        if (typeof key !== 'string') {
+            throw new Error('Must be a string')
+        }
+
+        const plugin = this.plugins[key]
+        if (!plugin) {
+            throw new PluginNotFoundError(key)
+        }
+
+        return plugin
+    }
+
+    /**
+     * The getAllPlugins method is called to get all the plugins from the editor.
+     * 
+     * @returns {object}
+     * @readonly
+     * @public
+     */
+    allPlugins() {
+        return this.plugins
     }
 
     /**
@@ -104,7 +175,7 @@ export default class BaseEditor {
         }
 
         if (this.plugins[key]) {
-            throw new Error('Plugin already exists')
+            throw new PluginDuplicationError(key)
         }
 
         this.plugins[key] = plugin
@@ -124,11 +195,11 @@ export default class BaseEditor {
         }
 
         if (!this.plugins[key]) {
-            throw new Error('Plugin does not exist')
+            throw new PluginNotFoundError(key)
         }
 
         if (this.plugins[key] instanceof BasePlugin) {
-            throw new Error('Cannot remove a BasePlugin - These are built-in plugins.')
+            throw new PluginBaseRemoveError(key)
         }
 
         delete this.plugins[key]

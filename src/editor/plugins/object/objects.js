@@ -28,7 +28,8 @@ export default class Objects extends BasePlugin {
      * @throws {Error} if unable to find scene
      */
     setup(context) {
-        const { instance: scene } = context.options.view.viewConfiguration.sceneConfig
+        const view = context.options.getView()
+        const scene = view.scene
         
         if (scene === null) {
             throw new Error('View Error: Unable to find scene')
@@ -93,12 +94,42 @@ export default class Objects extends BasePlugin {
             throw new Error('Must be a THREE.Object3D')
         }
 
-        const index = this.objects.indexOf(object)
+        let index = -1;
+        for (let i = 0; i < this.objects.length; i++) {
+            if (this.objects[i].uuid === object.uuid) {
+                index = i
+                break
+            }
+        }
+
         if (index === -1) {
             throw new Error('Unable to find object')
         }
 
+        const object3d = this.objects[index]
+        this.scene.remove(object3d)
         this.objects.splice(index, 1)
-        this.scene.remove(object)
+    }
+
+    /**
+     * Add a light to the scene and objects list
+     * 
+     * @param {string} name the name of the light
+     * @param {THREE.Color} color the color of the light
+     * @param {number} intensity the intensity of the light
+     * @returns {THREE.Light} the light
+     */
+    addLightByType(type, color, intensity = 1) {
+        const light = Util.createLightByType(type, color, intensity)
+        return this.add(light)
+    }
+
+    /**
+     * Get the objects
+     * 
+     * @returns {Array<THREE.Object3D>} the objects
+     */
+    getObjects() {
+        return this.objects
     }
 }

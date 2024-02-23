@@ -1,3 +1,4 @@
+import { toRaw } from 'vue';
 import * as THREE from 'three';
 import Axis from './Axis.js';
 import Util from './util.js';
@@ -36,16 +37,27 @@ export default class VisualTool {
         if (this.group) {
             this.clear()
         }
+        
+        /**
+         * IMPORTANT!
+         * The group must be added to the scene, without being a property of
+         * 'this', because there is a chance that the tool will be become a Vue
+         * proxy object, which will break the rendering of the group.
+         * 
+         * Therefore, assign the group to a variable, and add it to the scene.
+         * Then, save it after.
+         */
+        const group = new THREE.Group()
+        this.tool.options.getView().scene.add(group);
+        this.group = group;
 
         this.selected = selected;
-        this.group = new THREE.Group();
-        this.tool.options.view.scene.add(this.group);
         this.updatePosition();
     }
 
     clear() {
         if (this.group) {
-            this.tool.options.view.scene.remove(this.group)
+            this.tool.options.getView().scene.remove(toRaw(this.group))
             this.group = null
         }
 
@@ -85,7 +97,7 @@ export default class VisualTool {
             return false
         }
         
-        const view = this.tool.options.view
+        const view = this.tool.options.getView()
         const intersections = Util.calculateObjectsIntersection(object, view.camera, this.colliders)
         if (intersections && intersections.length > 0) {
             const intersection = intersections[0]
@@ -102,7 +114,7 @@ export default class VisualTool {
     deselectAxisCollider() {
         if (this.axis.isSelected) {
             this.axis.deselect();
-            this.tool.options.view.controls.enabled = true
+            this.tool.options.getView().controls.enabled = true
         }
     }
 }

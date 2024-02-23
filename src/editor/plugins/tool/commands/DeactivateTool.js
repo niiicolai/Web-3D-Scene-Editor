@@ -20,6 +20,7 @@ export default class DeactivateTool extends Command {
      * @returns {void}
      */
     async execute() {
-        this.invoker.options.plugins.tools.removeTool()
+        const tools = this.invoker.options.getPlugin('tools')
+        tools.removeTool()
     }
 }

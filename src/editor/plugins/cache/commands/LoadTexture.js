@@ -1,4 +1,5 @@
 import { Command } from '../../../editor.js'
+import CacheEntryDuplicationError from '../errors/CacheEntryDuplicationError.js'
 import * as THREE from 'three'
 
 /**
@@ -44,15 +45,14 @@ export default class LoadTexture extends Command {
      * @returns {void}
      */
     async execute() {
-        const cache = this.invoker.options.plugins.caches.find('textures')
-        if (!cache) {
-            throw new Error('Textures Cache not found')
-        }
+        const caches = this.invoker.options.getPlugin('caches')
+
+        const cache = caches.find('textures')
 
         const cacheKey = this.name
         const cached = cache.find(cacheKey)
         if (cached) {
-            throw new Error('Texture already loaded')
+            throw new CacheEntryDuplicationError('textures', cacheKey)
         }
 
         const textureLoader = new THREE.TextureLoader()

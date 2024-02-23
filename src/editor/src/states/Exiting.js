@@ -11,14 +11,16 @@ export default class Exiting extends State {
         /**
          * Clear all the plugins
          */
-        for (const key in this.context.options.plugins) {
-            this.context.options.plugins[key].clear()
+        const plugins = this.context.options.allPlugins()
+        for (const key in plugins) {
+            plugins[key].clear()
         }
 
         /**
          * Stop the view rendering
          */
-        this.context.options.view.stopRender()
+        const view = this.context.options.getView()
+        view.stopRender()
 
         /**
          * Change the state to Stopped        

@@ -1,5 +1,6 @@
 import { Command } from '../../../editor.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import CacheEntryDuplicationError from '../errors/CacheEntryDuplicationError.js'
 
 /**
  * @class
@@ -62,21 +63,17 @@ export default class LoadMesh extends Command {
      * @returns {void}
      */
     async execute() {
-        const meshCache = this.invoker.options.plugins.caches.find('meshes')
-        if (!meshCache) {
-            throw new Error('Mesh cache not found')
-        }
+        const caches = this.invoker.options.getPlugin('caches')
+
+        const meshCache = caches.find('meshes')
 
         const cacheKey = this.name
         const cached = meshCache.find(cacheKey)
         if (cached) {
-            throw new Error('Mesh already loaded')
+            throw new CacheEntryDuplicationError('meshes', cacheKey)
         }
         
-        const materialCache = this.invoker.options.plugins.caches.find('materials')
-        if (!materialCache) {
-            throw new Error('Material cache not found')
-        }
+        const materialCache = caches.find('materials')
 
         const loaderGLTF = new GLTFLoader()
         const gltf = await loaderGLTF.loadAsync(this.src)

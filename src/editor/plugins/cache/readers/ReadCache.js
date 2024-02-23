@@ -20,6 +20,7 @@ export default class ReadCache extends Reader {
         }
 
         this.name = name;
+        this.cache = this.editor.getPlugin('caches').find(this.name);
     }
 
     /**
@@ -29,12 +30,6 @@ export default class ReadCache extends Reader {
      * @throws {Error} if the cache name is invalid
      */
     read() {
-        const { cache } = this.editor.plugins.caches.find(this.name);
-        
-        if (!cache) {
-            throw new Error('Invalid cache name')
-        }
-
-        return Object.values(cache)
+        return this.cache.toArray();
     }
 }

@@ -3,13 +3,14 @@ import VisualTool from "../src/VisualTool.js";
 import Util from "../src/util.js";
 import * as THREE from "three";
 
+const size = new THREE.Vector3(1, 1, 1)
+
 class MoveVisualTool extends VisualTool {
     constructor(tool) {
         super(tool)
-        this.arrows = []
     }
 
-    setupArrows(size) {
+    setupArrows() {
         const position = new THREE.Vector3()
         const zAxis = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), position, size.z, 0x0000ff)
         const yAxis = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), position, size.y, 0x00ff00)
@@ -22,11 +23,9 @@ class MoveVisualTool extends VisualTool {
         this.group.add(zAxis)
         this.group.add(yAxis)
         this.group.add(xAxis)
-
-        this.arrows.push(zAxis, yAxis, xAxis)
     }
 
-    setupColliders(size) {
+    setupColliders() {
         const wireframeMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true })
         const zCollider = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, size.z, 10), wireframeMaterial)
         const yCollider = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, size.y, 10), wireframeMaterial)
@@ -61,20 +60,12 @@ class MoveVisualTool extends VisualTool {
             return
         }
 
-        const box = new THREE.Box3().setFromObject(this.selected)
-        const size = box.getSize(new THREE.Vector3())
-        this.setupArrows(size)
-        this.setupColliders(size)
+        this.setupArrows()
+        this.setupColliders()
     }
 
     clear() {
         super.clear()
-
-        for (const arrow of this.arrows) {
-            arrow.dispose()
-        }
-
-        this.arrows = []
     }
 
     onPointerMove(event) {
@@ -82,7 +73,7 @@ class MoveVisualTool extends VisualTool {
             return
         }
         
-        const camera = this.tool.options.view.camera
+        const camera = this.tool.options.getView().camera
         const normal = Util.calculateNormalFromAxis(this.axis.name)
         const { isIntersecting, intersection } = Util.calculatePlaneIntersection(event, camera, normal)
         if (isIntersecting) {

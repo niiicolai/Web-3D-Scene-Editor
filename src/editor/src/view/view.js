@@ -53,7 +53,6 @@ export default class View {
      * @returns {void}
      */
     setup(context) {
-        const { objects } = context.options.plugins
         const { cameraConfig, rendererConfig, gridConfig, sceneConfig, lightConfig } = toRaw(this.viewConfiguration)
         
         /**

@@ -37,8 +37,10 @@ export default class Selector extends BasePlugin {
      * @throws {Error} if unable to find events
      */
     setup(context) {
-        const { camera, scene } = context.options.view
-        const { events, objects } = context.options.plugins
+        const view = context.options.getView()
+        const events = context.options.getPlugin('events')
+        const objects = context.options.getPlugin('objects')
+        const { camera, scene } = view
 
         if (camera === null) {
             throw new Error('View Error: Unable to find camera')
@@ -46,14 +48,6 @@ export default class Selector extends BasePlugin {
 
         if (scene === null) {
             throw new Error('View Error: Unable to find scene')
-        }
-
-        if (objects === null) {
-            throw new Error('Dependency Error: Unable to find objects plugin')
-        }
-
-        if (events === null) {
-            throw new Error('Dependency Error: Unable to find events plugin')
         }
 
         this.camera = camera
